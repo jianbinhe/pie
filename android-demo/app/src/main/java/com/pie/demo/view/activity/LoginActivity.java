@@ -27,7 +27,7 @@ import java.util.Date;
 public class LoginActivity extends AppCompatActivity {
 
     private TextView mTVmm, mTvchToken, mTVtoken, mTvtime, mTVpass;
-    private EditText mEtAccout, mEtpwd, mEttoken;
+    private EditText mEtAccout, mEtpwd, mEttoken, mDhAddr, mDhAppId, mDhPhoneToken;
     private Button mBtLogin;
     private LinearLayout mLltoken, mLlpwd, mLlaccout, mLltokentime;
     private boolean isShowPwd = true;
@@ -157,6 +157,9 @@ public class LoginActivity extends AppCompatActivity {
                     SpUtils.getInstance().putString(Constants.LOGINSTYLETHREE, "loginpwd");
                 }
 
+                SpUtils.getInstance().putString(Constants.DH_ADDR, mDhAddr.getText().toString().trim());
+                SpUtils.getInstance().putString(Constants.DH_APP_ID, mDhAppId.getText().toString().trim());
+                SpUtils.getInstance().putString(Constants.DH_PHONE_TOKEN, mDhPhoneToken.getText().toString().trim());
 
                 if (isShowToken) {
                     String accout = mEtAccout.getText().toString().trim();
@@ -233,6 +236,9 @@ public class LoginActivity extends AppCompatActivity {
         mTVpass = findViewById(R.id.mTVpass);
         mLlaccout = findViewById(R.id.mLlaccout);
         mLltokentime = findViewById(R.id.mLltokentime);
+        mDhAddr = findViewById(R.id.dh_addr);
+        mDhAppId = findViewById(R.id.dh_app_id);
+        mDhPhoneToken = findViewById(R.id.dh_phone_token);
 
         mEtAccout.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         mEttoken.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
@@ -249,6 +255,10 @@ public class LoginActivity extends AppCompatActivity {
         String accout = SpUtils.getInstance().getString(Constants.ACCOUTONE);
         String pwd = SpUtils.getInstance().getString(Constants.PWDONE);
         String token = SpUtils.getInstance().getString(Constants.TOKENONE);
+        String dhApp = SpUtils.getInstance().getString(Constants.DH_APP_ID);
+        String dhAddr = SpUtils.getInstance().getString(Constants.DH_ADDR);
+        String dhPhoneToken = SpUtils.getInstance().getString(Constants.DH_PHONE_TOKEN);
+
         if (!TextUtils.isEmpty(accout)) {
             mEtAccout.setText(accout);
         }
@@ -258,6 +268,16 @@ public class LoginActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(token)) {
             mEttoken.setText(token);
         }
+        if (!TextUtils.isEmpty(dhAddr)) {
+            mDhAddr.setText(dhAddr);
+        }
+        if (!TextUtils.isEmpty(dhApp)) {
+            mDhAppId.setText(dhApp);
+        }
+        if (!TextUtils.isEmpty(dhPhoneToken)) {
+            mDhPhoneToken.setText(dhPhoneToken);
+        }
+
     }
 
     private void hideSoftKeyboard() {

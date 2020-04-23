@@ -9,7 +9,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.LinearInterpolator;
 
@@ -174,18 +176,16 @@ public class VoiceImgView extends android.support.v7.widget.AppCompatButton {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (isMorphing) {
-                stopAnim();
-                if (onVoiceButtonInterface != null) {
-                    onVoiceButtonInterface.onStopVoice();
-                }
-            } else {
-                startAnim();
-                if (onVoiceButtonInterface != null) {
-                    onVoiceButtonInterface.onStartVoice();
-                }
+            startAnim();
+            if (onVoiceButtonInterface != null) {
+                onVoiceButtonInterface.onStartVoice();
             }
-
+            return true;
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            stopAnim();
+            if (onVoiceButtonInterface != null) {
+                onVoiceButtonInterface.onStopVoice();
+            }
             return true;
         } else {
             return super.onTouchEvent(event);

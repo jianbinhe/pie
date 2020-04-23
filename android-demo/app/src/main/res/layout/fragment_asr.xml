@@ -7,12 +7,13 @@
 
     <com.pie.demo.view.weiget.VoiceImgView
         android:id="@+id/vivButton"
-        android:layout_width="200.0dip"
-        android:layout_height="50.0dip"
+        android:layout_width="377dp"
+        android:layout_height="269dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20.0dip"
-        android:text="开始录音" />
+        android:layout_marginBottom="20dp"
+        android:text="按住说话\n说完松手"
+        android:textSize="36sp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -23,10 +24,32 @@
         <LinearLayout
             android:id="@+id/mRlOne"
             android:layout_width="fill_parent"
-            android:layout_height="0.0dip"
+            android:layout_height="365dp"
             android:layout_weight="1.0"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
+
+            <RadioGroup
+                android:id="@+id/rg_dh_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkedButton="@id/rb_dh_query"
+                android:clickable="false"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_dh_query"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="询问数字人" />
+
+                <RadioButton
+                    android:id="@+id/rb_dh_render"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="让数字人说" />
+            </RadioGroup>
 
             <TextView
                 android:id="@+id/mTvOne"
@@ -56,124 +79,38 @@
 
             <ScrollView
                 android:id="@+id/mSlOne"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="391dp"
+                android:layout_height="117dp"
                 android:layout_marginLeft="10.0dip"
                 android:layout_marginRight="10.0dip"
                 android:layout_marginBottom="10.0dip"
-                android:background="@drawable/bg_scrollview">
+                android:background="@drawable/bg_scrollview"
+                android:clickable="false">
 
-                <TextView
+                <EditText
                     android:id="@+id/ttvText1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorblue"
-                    android:textSize="20.0sp" />
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine" />
+
+
+<!--                <EditText-->
+<!--                    android:id="@+id/ttvText1"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:clickable="true"-->
+<!--                    android:textColor="@color/colorblue"-->
+<!--                    android:textSize="20.0sp" />-->
             </ScrollView>
-        </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/mRlTwo"
-            android:layout_width="fill_parent"
-            android:layout_height="0.0dip"
-            android:layout_weight="1.0"
-            android:orientation="vertical"
-            android:visibility="gone">
 
-            <TextView
-                android:id="@+id/mTvTwo"
-                android:layout_width="fill_parent"
+            <Button
+                android:id="@+id/dh_send_directly"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10.0dip"
-                android:layout_marginTop="10.0dip"
-                android:layout_marginRight="10.0dip"
-                android:background="@drawable/bg_scrollview"
-                android:padding="10.0dip"
-                android:textColor="#ff000000"
-                android:textSize="16.0sp" />
-
-            <TextView
-                android:id="@+id/mTvTwoError"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10.0dip"
-                android:layout_marginRight="10.0dip"
-                android:background="@drawable/bg_scrollview"
-                android:drawableLeft="@mipmap/error"
-                android:drawablePadding="3.0dip"
-                android:padding="10.0dip"
-                android:textColor="#ff000000"
-                android:textSize="13.0sp"
-                android:visibility="gone" />
-
-            <ScrollView
-                android:id="@+id/mSlTwo"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="10.0dip"
-                android:layout_marginRight="10.0dip"
-                android:layout_marginBottom="10.0dip"
-                android:background="@drawable/bg_scrollview">
-
-                <TextView
-                    android:id="@+id/ttvText2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorblue"
-                    android:textSize="20.0sp" />
-            </ScrollView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/mRlThree"
-            android:layout_width="fill_parent"
-            android:layout_height="0.0dip"
-            android:layout_weight="1.0"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/mTvThree"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10.0dip"
-                android:layout_marginTop="10.0dip"
-                android:layout_marginRight="10.0dip"
-                android:background="@drawable/bg_scrollview"
-                android:padding="10.0dip"
-                android:textColor="#ff000000"
-                android:textSize="16.0sp" />
-
-            <TextView
-                android:id="@+id/mTvThreeError"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10.0dip"
-                android:layout_marginRight="10.0dip"
-                android:background="@drawable/bg_scrollview"
-                android:drawableLeft="@mipmap/error"
-                android:drawablePadding="3.0dip"
-                android:padding="10.0dip"
-                android:textColor="#ff000000"
-                android:textSize="13.0sp"
-                android:visibility="gone" />
-
-            <ScrollView
-                android:id="@+id/mSlTHree"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="10.0dip"
-                android:layout_marginRight="10.0dip"
-                android:layout_marginBottom="10.0dip"
-                android:background="@drawable/bg_scrollview">
-
-                <TextView
-                    android:id="@+id/ttvText3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorblue"
-                    android:textSize="20.0sp" />
-            </ScrollView>
+                android:text="直接发送" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

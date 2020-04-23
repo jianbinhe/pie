@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -34,7 +35,8 @@
                     android:layout_height="wrap_content"
                     android:digits="0123456789."
                     android:hint="设置ip"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:text="180.76.168.139" />
 
                 <EditText
                     android:id="@+id/mEtPort"
@@ -42,7 +44,8 @@
                     android:layout_height="wrap_content"
                     android:digits="0123456789."
                     android:hint="设置port"
-                    android:inputType="number" />
+                    android:inputType="number"
+                    android:text="8051" />
 
                 <ScrollView
                     android:layout_width="match_parent"

@@ -59,4 +59,8 @@ public class Constants {
     public static final String LOGINSTYLETWO = "loginstyletwo";
     public static final String LOGINSTYLETHREE = "loginstylethree";
 
+    public static final String DH_APP_ID = "dh_app_id";
+    public static final String DH_ADDR = "dh_addr";
+    public static final String DH_PHONE_TOKEN = "dh_phone_token";
+
 }

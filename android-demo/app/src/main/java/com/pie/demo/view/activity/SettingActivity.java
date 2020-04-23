@@ -43,17 +43,17 @@ public class SettingActivity extends AppCompatActivity {
     private Switch mSwitch;
     private boolean mSwitchIsChecked;
     private String flag;
-    private int checkedRadioButtonId = -1;
 
     private Button mBTTTS;
     private EditText mEtPortIpTTS, mEtSpd, mEtPit, mEtVol;
 
-    private boolean isChanged = false;
+//    private boolean isChanged = false;
     private AsrProduct[] values;
     private int isCheckId = -1;
 
     private TextView mTVmm, mTvchToken, mTVtoken, mTvtime, mTVpass;
     private EditText mEtAccout, mEtpwd, mEttoken;
+    private EditText mDhAddr, mDhAppId, mDhPhoneToken;
     private Button mBtLogin;
     private LinearLayout mLltoken, mLlpwd, mLlaccout, mLltokentime;
     private boolean isShowPwd, isShowToken, isShowNo;
@@ -64,8 +64,6 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
 
         flag = getIntent().getStringExtra("flag");
-
-
         initView();
 
         setSupportActionBar(mToolbarSetting);
@@ -92,6 +90,10 @@ public class SettingActivity extends AppCompatActivity {
         mEtSpd = findViewById(R.id.mEtSpd);
         mEtPit = findViewById(R.id.mEtPit);
         mEtVol = findViewById(R.id.mEtVol);
+
+        mDhAddr = findViewById(R.id.dh_addr);
+        mDhAppId = findViewById(R.id.dh_app_id);
+        mDhPhoneToken = findViewById(R.id.dh_phone_token);
 
         LinearLayout localLinearLayout1 = (LinearLayout) findViewById(R.id.mLOne);
         LinearLayout localLinearLayout2 = (LinearLayout) findViewById(R.id.mLTwo);
@@ -136,20 +138,24 @@ public class SettingActivity extends AppCompatActivity {
          * 登陆相关
          * */
         String loginstyleone = SpUtils.getInstance().getString(Constants.LOGINSTYLEONE);
-        String loginstyletwo = SpUtils.getInstance().getString(Constants.LOGINSTYLETWO);
-        String loginstylethree = SpUtils.getInstance().getString(Constants.LOGINSTYLETHREE);
         String oneAccout = SpUtils.getInstance().getString(Constants.ACCOUTONE);
-        String twoAccout = SpUtils.getInstance().getString(Constants.ACCOUTTWO);
-        String threeAccout = SpUtils.getInstance().getString(Constants.ACCOUTHREE);
         String onePwd = SpUtils.getInstance().getString(Constants.PWDONE);
-        String twoPwd = SpUtils.getInstance().getString(Constants.PWDTWO);
-        String threePwd = SpUtils.getInstance().getString(Constants.PWDTHREE);
         String oneToken = SpUtils.getInstance().getString(Constants.TOKENONE);
-        String twoToken = SpUtils.getInstance().getString(Constants.TOKENTWO);
-        String threeToken = SpUtils.getInstance().getString(Constants.TOKENTHREE);
         String oneTime = SpUtils.getInstance().getString(Constants.TIMEONE);
-        String twoTime = SpUtils.getInstance().getString(Constants.TIMETWO);
-        String threeTime = SpUtils.getInstance().getString(Constants.TIMETHREE);
+        String dhApp = SpUtils.getInstance().getString(Constants.DH_APP_ID);
+        String dhAddr = SpUtils.getInstance().getString(Constants.DH_ADDR);
+        String dhPhoneToken = SpUtils.getInstance().getString(Constants.DH_PHONE_TOKEN);
+
+        if (!TextUtils.isEmpty(dhAddr)) {
+            mDhAddr.setText(dhAddr);
+        }
+        if (!TextUtils.isEmpty(dhApp)) {
+            mDhAppId.setText(dhApp);
+        }
+        if (!TextUtils.isEmpty(dhApp)) {
+            mDhPhoneToken.setText(dhPhoneToken);
+        }
+
 
         /**
          *
@@ -187,67 +193,6 @@ public class SettingActivity extends AppCompatActivity {
                         break;
                 }
 
-                break;
-            case "two":
-                String twoAddress = SpUtils.getInstance().getString(Constants.TWOADDRESS);
-                String twoPort = SpUtils.getInstance().getString(Constants.TWOPORT);
-                if (!TextUtils.isEmpty(twoAddress) && !TextUtils.isEmpty(twoPort)) {
-                    mEtIp.setText(twoAddress);
-                    mEtPort.setText(twoPort);
-                }
-
-                boolean switchtwo = SpUtils.getInstance().getBool(Constants.SWITCHISCHECKEDTWO);
-                mSwitchIsChecked = switchtwo;
-                mSwitch.setChecked(switchtwo);
-
-                switch (loginstyletwo) {
-                    case "loginpwd":
-                        loginPwd();
-                        mEtAccout.setText(twoAccout);
-                        mEtpwd.setText(twoPwd);
-                        mTvtime.setText(twoTime);
-                        break;
-                    case "logintoken":
-                        loginToken();
-                        mEtAccout.setText(twoAccout);
-                        mEttoken.setText(twoToken);
-                        mTvtime.setText(twoTime);
-                        break;
-                    case "loginno":
-                        loginNo();
-                        break;
-                }
-
-                break;
-            case "three":
-                String threeAddress = SpUtils.getInstance().getString(Constants.THREEADDRESS);
-                String threePort = SpUtils.getInstance().getString(Constants.THREEPORT);
-                if (!TextUtils.isEmpty(threeAddress) && !TextUtils.isEmpty(threePort)) {
-                    mEtIp.setText(threeAddress);
-                    mEtPort.setText(threePort);
-                }
-
-                boolean switchthree = SpUtils.getInstance().getBool(Constants.SWITCHISCHECKEDTHREE);
-                mSwitchIsChecked = switchthree;
-                mSwitch.setChecked(switchthree);
-
-                switch (loginstylethree) {
-                    case "loginpwd":
-                        loginPwd();
-                        mEtAccout.setText(threeAccout);
-                        mEtpwd.setText(threePwd);
-                        mTvtime.setText(threeTime);
-                        break;
-                    case "logintoken":
-                        loginToken();
-                        mEtAccout.setText(threeAccout);
-                        mEttoken.setText(threeToken);
-                        mTvtime.setText(threeTime);
-                        break;
-                    case "loginno":
-                        loginNo();
-                        break;
-                }
                 break;
         }
         /**
@@ -288,6 +233,10 @@ public class SettingActivity extends AppCompatActivity {
 
                 String ip = mEtIp.getText().toString().trim();
                 String port = mEtPort.getText().toString().trim();
+
+                SpUtils.getInstance().putString(Constants.DH_ADDR, mDhAddr.getText().toString().trim());
+                SpUtils.getInstance().putString(Constants.DH_APP_ID, mDhAppId.getText().toString().trim());
+                SpUtils.getInstance().putString(Constants.DH_PHONE_TOKEN, mDhPhoneToken.getText().toString().trim());
 
                 switch (flag) {
                     case "one":
@@ -347,196 +296,31 @@ public class SettingActivity extends AppCompatActivity {
                             }
 
 
-                            if (isChanged) {
-
-                                int one = SpUtils.getInstance().getInt(Constants.ONEASRPRODUCT);
-                                if (values[one].getSampleRate() == values[checkedRadioButtonId - 1].getSampleRate()) {
-                                    SpUtils.getInstance().putInt(Constants.ONEASRPRODUCT, checkedRadioButtonId - 1);
-                                    finish();
-                                } else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                                    builder.setTitle("确定要修改采样率吗？确定会删除掉采样率不同的板块。")
-                                            .setNegativeButton("取消", null)
-                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    SpUtils.getInstance().putInt(Constants.ONEASRPRODUCT, checkedRadioButtonId - 1);
-                                                    SpUtils.getInstance().putBool(Constants.ISCHANGEHZONE, false);
-                                                    dialog.dismiss();
-                                                    finish();
-                                                }
-                                            })
-                                            .show();
-                                }
-
-                            } else {
-                                finish();
-                            }
-
-                        }
-                        break;
-                    case "two":
-                        if (!TextUtils.isEmpty(ip) && !TextUtils.isEmpty(port)) {
-                            SpUtils.getInstance().putString(Constants.TWOADDRESS, ip);
-                            SpUtils.getInstance().putString(Constants.TWOPORT, port);
-                            SpUtils.getInstance().putBool(Constants.SWITCHISCHECKEDTWO, mSwitchIsChecked);
-
-                            if (isShowPwd) {
-                                String accout = mEtAccout.getText().toString().trim();
-                                if (TextUtils.isEmpty(accout)) {
-                                    Toast.makeText(SettingActivity.this, "请填写账号", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                String pwd = mEtpwd.getText().toString().trim();
-                                if (TextUtils.isEmpty(pwd)) {
-                                    Toast.makeText(SettingActivity.this, "请填写密码", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                String time = mTvtime.getText().toString().trim();
-
-                                SpUtils.getInstance().putString(Constants.ACCOUTTWO, accout);
-                                SpUtils.getInstance().putString(Constants.PWDTWO, pwd);
-                                SpUtils.getInstance().putString(Constants.TIMETWO, time);
-                                SpUtils.getInstance().putString(Constants.TOKENTWO, null);
-                                SpUtils.getInstance().putString(Constants.LOGINSTYLETWO, "loginpwd");
-                            }
-
-
-                            if (isShowToken) {
-                                String accout = mEtAccout.getText().toString().trim();
-                                if (TextUtils.isEmpty(accout)) {
-                                    Toast.makeText(SettingActivity.this, "请填写账号", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                String token = mEttoken.getText().toString().trim();
-                                if (TextUtils.isEmpty(token)) {
-                                    Toast.makeText(SettingActivity.this, "请填写token", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                String time = mTvtime.getText().toString().trim();
-
-                                SpUtils.getInstance().putString(Constants.ACCOUTTWO, accout);
-                                SpUtils.getInstance().putString(Constants.PWDTWO, null);
-                                SpUtils.getInstance().putString(Constants.TIMETWO, time);
-                                SpUtils.getInstance().putString(Constants.TOKENTWO, token);
-                                SpUtils.getInstance().putString(Constants.LOGINSTYLETWO, "logintoken");
-                            }
-
-                            if (isShowNo) {
-                                SpUtils.getInstance().putString(Constants.ACCOUTTWO, null);
-                                SpUtils.getInstance().putString(Constants.PWDTWO, null);
-                                SpUtils.getInstance().putString(Constants.TIMETWO, null);
-                                SpUtils.getInstance().putString(Constants.TOKENTWO, null);
-                                SpUtils.getInstance().putString(Constants.LOGINSTYLETWO, "loginno");
-                            }
-
-
-                            if (isChanged) {
-                                int two = SpUtils.getInstance().getInt(Constants.TWOASRPRODUCT);
-                                if (values[two].getSampleRate() == values[checkedRadioButtonId - 1].getSampleRate()) {
-                                    SpUtils.getInstance().putInt(Constants.TWOASRPRODUCT, checkedRadioButtonId - 1);
-                                    finish();
-                                } else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                                    builder.setTitle("确定要修改采样率吗？确定会删除掉采样率不同的板块。")
-                                            .setNegativeButton("取消", null)
-                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    SpUtils.getInstance().putInt(Constants.TWOASRPRODUCT, checkedRadioButtonId - 1);
-                                                    SpUtils.getInstance().putBool(Constants.ISCHANGEHZTWO, false);
-                                                    dialog.dismiss();
-                                                    finish();
-                                                }
-                                            })
-                                            .show();
-                                }
-
-                            } else {
-                                finish();
-                            }
-                        }
-                        break;
-                    case "three":
-                        if (!TextUtils.isEmpty(ip) && !TextUtils.isEmpty(port)) {
-                            SpUtils.getInstance().putString(Constants.THREEADDRESS, ip);
-                            SpUtils.getInstance().putString(Constants.THREEPORT, port);
-                            SpUtils.getInstance().putBool(Constants.SWITCHISCHECKEDTHREE, mSwitchIsChecked);
-
-                            if (isShowPwd) {
-                                String accout = mEtAccout.getText().toString().trim();
-                                if (TextUtils.isEmpty(accout)) {
-                                    Toast.makeText(SettingActivity.this, "请填写账号", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                String pwd = mEtpwd.getText().toString().trim();
-                                if (TextUtils.isEmpty(pwd)) {
-                                    Toast.makeText(SettingActivity.this, "请填写密码", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                String time = mTvtime.getText().toString().trim();
-
-                                SpUtils.getInstance().putString(Constants.ACCOUTHREE, accout);
-                                SpUtils.getInstance().putString(Constants.PWDTHREE, pwd);
-                                SpUtils.getInstance().putString(Constants.TIMETHREE, time);
-                                SpUtils.getInstance().putString(Constants.TOKENTHREE, null);
-                                SpUtils.getInstance().putString(Constants.LOGINSTYLETHREE, "loginpwd");
-                            }
-
-
-                            if (isShowToken) {
-                                String accout = mEtAccout.getText().toString().trim();
-                                if (TextUtils.isEmpty(accout)) {
-                                    Toast.makeText(SettingActivity.this, "请填写账号", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-                                String token = mEttoken.getText().toString().trim();
-                                if (TextUtils.isEmpty(token)) {
-                                    Toast.makeText(SettingActivity.this, "请填写token", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                String time = mTvtime.getText().toString().trim();
-
-                                SpUtils.getInstance().putString(Constants.ACCOUTHREE, accout);
-                                SpUtils.getInstance().putString(Constants.PWDTHREE, null);
-                                SpUtils.getInstance().putString(Constants.TIMETHREE, time);
-                                SpUtils.getInstance().putString(Constants.TOKENTHREE, token);
-                                SpUtils.getInstance().putString(Constants.LOGINSTYLETHREE, "logintoken");
-                            }
-
-                            if (isShowNo) {
-                                SpUtils.getInstance().putString(Constants.ACCOUTHREE, null);
-                                SpUtils.getInstance().putString(Constants.PWDTHREE, null);
-                                SpUtils.getInstance().putString(Constants.TIMETHREE, null);
-                                SpUtils.getInstance().putString(Constants.TOKENTHREE, null);
-                                SpUtils.getInstance().putString(Constants.LOGINSTYLETHREE, "loginno");
-                            }
-
-                            if (isChanged) {
-                                int three = SpUtils.getInstance().getInt(Constants.THREEASRPRODUCT);
-                                if (values[three].getSampleRate() == values[checkedRadioButtonId - 1].getSampleRate()) {
-                                    SpUtils.getInstance().putInt(Constants.THREEASRPRODUCT, checkedRadioButtonId - 1);
-                                    finish();
-                                } else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                                    builder.setTitle("确定要修改采样率吗？确定会删除掉采样率不同的板块。")
-                                            .setNegativeButton("取消", null)
-                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    SpUtils.getInstance().putInt(Constants.THREEASRPRODUCT, checkedRadioButtonId - 1);
-                                                    SpUtils.getInstance().putBool(Constants.ISCHANGEHZTHREE, false);
-                                                    dialog.dismiss();
-                                                    finish();
-                                                }
-                                            })
-                                            .show();
-                                }
-                            } else {
-                                finish();
-                            }
+//                            if (isChanged) {
+//
+//                                int one = SpUtils.getInstance().getInt(Constants.ONEASRPRODUCT);
+//                                if (values[one].getSampleRate() == values[checkedRadioButtonId - 1].getSampleRate()) {
+//                                    SpUtils.getInstance().putInt(Constants.ONEASRPRODUCT, checkedRadioButtonId - 1);
+//                                    finish();
+//                                } else {
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+//                                    builder.setTitle("确定要修改采样率吗？确定会删除掉采样率不同的板块。")
+//                                            .setNegativeButton("取消", null)
+//                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    SpUtils.getInstance().putInt(Constants.ONEASRPRODUCT, checkedRadioButtonId - 1);
+//                                                    SpUtils.getInstance().putBool(Constants.ISCHANGEHZONE, false);
+//                                                    dialog.dismiss();
+//                                                    finish();
+//                                                }
+//                                            })
+//                                            .show();
+//                                }
+//
+//                            } else {
+//                                finish();
+//                            }
 
                         }
                         break;
@@ -631,17 +415,6 @@ public class SettingActivity extends AppCompatActivity {
             case "one":
                 int oneAsr = SpUtils.getInstance().getInt(Constants.ONEASRPRODUCT);
                 isCheckId = oneAsr;
-                checkedRadioButtonId = oneAsr;
-                break;
-            case "two":
-                int twoAsr = SpUtils.getInstance().getInt(Constants.TWOASRPRODUCT);
-                isCheckId = twoAsr;
-                checkedRadioButtonId = twoAsr;
-                break;
-            case "three":
-                int threeAsr = SpUtils.getInstance().getInt(Constants.THREEASRPRODUCT);
-                isCheckId = threeAsr;
-                checkedRadioButtonId = threeAsr;
                 break;
         }
         mRadioGroup.removeAllViews();
@@ -659,8 +432,6 @@ public class SettingActivity extends AppCompatActivity {
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                isChanged = true;
-                checkedRadioButtonId = checkedId;
 
             }
         });

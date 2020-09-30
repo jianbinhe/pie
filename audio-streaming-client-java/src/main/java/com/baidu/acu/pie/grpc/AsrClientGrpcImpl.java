@@ -2,7 +2,16 @@
 
 package com.baidu.acu.pie.grpc;
 
-import static com.google.common.hash.Hashing.sha256;
+import com.google.common.base.Strings;
+import com.google.protobuf.ByteString;
+import io.grpc.Context;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
+import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import org.joda.time.DateTime;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.baidu.acu.pie.AsrServiceGrpc;
 import com.baidu.acu.pie.AsrServiceGrpc.AsrServiceStub;
@@ -35,15 +43,7 @@ import com.baidu.acu.pie.model.RequestMetaData;
 import com.baidu.acu.pie.model.StreamContext;
 import com.baidu.acu.pie.util.Base64;
 import com.baidu.acu.pie.util.DateTimeParser;
-import com.google.common.base.Strings;
-import com.google.protobuf.ByteString;
-
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
-import io.grpc.stub.StreamObserver;
-import lombok.extern.slf4j.Slf4j;
+import static com.google.common.hash.Hashing.sha256;
 
 /**
  * AsrClientGrpcImpl
@@ -91,9 +91,9 @@ public class AsrClientGrpcImpl implements AsrClient {
     @Override
     public int getFragmentSize(RequestMetaData requestMetaData) {
         return (int) (asrConfig.getProduct().getSampleRate()
-                              * requestMetaData.getSendPackageRatio()
-                              * requestMetaData.getSendPerSeconds()
-                              * Constants.DEFAULT_BIT_DEPTH); // bit-depth
+                * requestMetaData.getSendPackageRatio()
+                * requestMetaData.getSendPerSeconds()
+                * Constants.DEFAULT_BIT_DEPTH); // bit-depth
     }
 
     @Override
@@ -140,8 +140,8 @@ public class AsrClientGrpcImpl implements AsrClient {
         return results;
     }
 
-    private CountDownLatch sendRequests(InputStream inputStream, RequestMetaData requestMetaData,
-            final List<RecognitionResult> results) {
+    private CountDownLatch sendRequests(InputStream inputStream, final RequestMetaData requestMetaData,
+                                        final List<RecognitionResult> results) {
 
         List<AudioFragmentRequest> requests = new ArrayList<>();
         byte[] data = new byte[this.getFragmentSize(requestMetaData)];
@@ -159,33 +159,41 @@ public class AsrClientGrpcImpl implements AsrClient {
         }
 
         final CountDownLatch finishLatch = new CountDownLatch(1);
-        AsrServiceStub stubWithMetadata = MetadataUtils.attachHeaders(asyncStub, prepareMetadata(requestMetaData));
 
-        StreamObserver<AudioFragmentRequest> requestStreamObserver = stubWithMetadata.send(
-                new StreamObserver<AudioFragmentResponse>() {
-                    @Override
-                    public void onNext(AudioFragmentResponse response) {
-                        if (response.getErrorCode() == 0) {
-                            results.add(fromAudioFragmentResponse(response.getAudioFragment()));
-                        } else {
-                            log.error("response with error: {}, {}",
-                                    response.getErrorCode(), response.getErrorMessage());
-                        }
-                    }
+        final AtomicReference<StreamObserver<AudioFragmentRequest>> observerWrapper = new AtomicReference<>();
+        Context.current().fork().run(new Runnable() {
+            @Override
+            public void run() {
+                AsrServiceStub stubWithMetadata = MetadataUtils.attachHeaders(asyncStub,
+                        prepareMetadata(requestMetaData));
+                observerWrapper.set(stubWithMetadata.send(
+                        new StreamObserver<AudioFragmentResponse>() {
+                            @Override
+                            public void onNext(AudioFragmentResponse response) {
+                                if (response.getErrorCode() == 0) {
+                                    results.add(fromAudioFragmentResponse(response.getAudioFragment()));
+                                } else {
+                                    log.error("response with error: {}, {}",
+                                            response.getErrorCode(), response.getErrorMessage());
+                                }
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        log.error("receive response error: ", t);
-                        finishLatch.countDown();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                log.error("receive response error: ", t);
+                                finishLatch.countDown();
+                            }
 
-                    @Override
-                    public void onCompleted() {
-                        log.info("StreamObserver completed");
-                        finishLatch.countDown();
-                    }
-                });
+                            @Override
+                            public void onCompleted() {
+                                log.info("StreamObserver completed");
+                                finishLatch.countDown();
+                            }
+                        }));
+            }
+        });
 
+        StreamObserver<AudioFragmentRequest> requestStreamObserver = observerWrapper.get();
         try {
             for (AudioFragmentRequest message : requests) {
                 requestStreamObserver.onNext(message);
@@ -207,18 +215,23 @@ public class AsrClientGrpcImpl implements AsrClient {
 
     @Override
     public StreamContext asyncRecognize(final Consumer<RecognitionResult> resultConsumer,
-            RequestMetaData requestMetaData) {
+                                        final RequestMetaData requestMetaData) {
         final FinishLatchImpl finishLatch = new FinishLatchImpl();
-        AsrServiceStub stubWithMetadata = MetadataUtils.attachHeaders(asyncStub, prepareMetadata(requestMetaData));
+        final AtomicReference<StreamObserver<AudioFragmentRequest>> observerWrapper = new AtomicReference<>();
 
-        return StreamContext.builder()
-                .sender(stubWithMetadata.send(new StreamObserver<AudioFragmentResponse>() {
+        Context.current().fork().run(new Runnable() {
+            @Override
+            public void run() {
+                AsrServiceStub stubWithMetadata = MetadataUtils.attachHeaders(asyncStub,
+                        prepareMetadata(requestMetaData));
+                observerWrapper.set(stubWithMetadata.send(new StreamObserver<AudioFragmentResponse>() {
                     @Override
                     public void onNext(AudioFragmentResponse response) {
                         if (response.getErrorCode() == 0) {
                             resultConsumer.accept(fromAudioFragmentResponse(response.getAudioFragment()));
                         } else {
-                            finishLatch.fail(new AsrException(response.getErrorCode(), response.getErrorMessage()));
+                            finishLatch.fail(new AsrException(response.getErrorCode(),
+                                    response.getErrorMessage()));
                         }
                     }
 
@@ -234,7 +247,12 @@ public class AsrClientGrpcImpl implements AsrClient {
                         log.info("response observer complete");
                         finishLatch.finish();
                     }
-                }))
+                }));
+            }
+        });
+
+        return StreamContext.builder()
+                .sender(observerWrapper.get())
                 .finishLatch(finishLatch)
                 .fragmentSize(getFragmentSize(requestMetaData))
                 .build();

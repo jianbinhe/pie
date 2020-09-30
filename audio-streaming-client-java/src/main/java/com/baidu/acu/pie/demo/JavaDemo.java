@@ -29,7 +29,7 @@ import com.baidu.acu.pie.model.StreamContext;
 public class JavaDemo {
     public static void main(String[] args) {
         JavaDemo javaDemo = new JavaDemo();
-        //        javaDemo.recognizeFile();
+        javaDemo.recognizeFileWithRequestMeta();
         javaDemo.asyncRecognition();
     }
 
@@ -52,7 +52,7 @@ public class JavaDemo {
         requestMetaData.setSendPackageRatio(1);
         requestMetaData.setSleepRatio(1);
         requestMetaData.setTimeoutMinutes(120);
-        requestMetaData.setEnableFlushData(false);
+        requestMetaData.setEnableFlushData(true);
 
         return requestMetaData;
     }
@@ -61,7 +61,7 @@ public class JavaDemo {
      * 用户可以自己创建一个 RequestMeta 对象，用来控制请求时候的数据发送速度等参数
      */
     public void recognizeFileWithRequestMeta() {
-        File audioFile = new File("testaudio/10s.wav");
+        File audioFile = new File("testaudio/xeq16k.wav");
 
         AsrClient asrClient = createAsrClient();
 
@@ -121,7 +121,7 @@ public class JavaDemo {
      * 使用长音频来模拟人对着麦克风不断说话的情况
      */
     public void asyncRecognition() {
-        String longAudioFilePath = "testaudio/1.wav";
+        String longAudioFilePath = "testaudio/xeq16k.wav";
         AsrClient asrClient = createAsrClient();
 
         RequestMetaData requestMetaData = createRequestMeta();
@@ -142,7 +142,7 @@ public class JavaDemo {
             System.out.println(new DateTime().toString() + "\t" + Thread.currentThread().getId() + " start to send");
 
             // 使用 sender.onNext 方法，将 InputStream 中的数据不断地发送到 asr 后端，发送的最小单位是 AudioFragment
-            while (audioStream.read(data) != -1 && !streamContext.getFinishLatch().finished()) {
+            while (audioStream.read(data) != -1 && !streamContext.finished()) {
                 streamContext.send(data);
                 // 主动休眠一段时间，来模拟人说话场景下的音频产生速率
                 // 在对接麦克风等设备的时候，可以去掉这个 sleep
@@ -152,9 +152,11 @@ public class JavaDemo {
             streamContext.complete();
 
             // wait to ensure to receive the last response
-            streamContext.getFinishLatch().await();
+            streamContext.await();
+            System.out.println("finish latch");
         } catch (Throwable e) {
             e.printStackTrace();
+            System.out.println("exep");
         } finally {
             asrClient.shutdown();
         }
